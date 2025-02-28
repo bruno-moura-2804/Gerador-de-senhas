@@ -1,0 +1,112 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Senhas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        .typing {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid;
+            animation: typing 2s steps(20, end), blink-caret 0.75s step-end infinite;
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: white; }
+        }
+        @keyframes rgb-border {
+            0% { border-color: red; }
+            25% { border-color: yellow; }
+            50% { border-color: green; }
+            75% { border-color: blue; }
+            100% { border-color: red; }
+        }
+        .rgb-border {
+            border: 4px solid;
+            animation: rgb-border 5s infinite;
+        }
+        .toggle-button {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        .toggle-button.active {
+            background-color: green;
+            color: white;
+        }
+        .toggle-button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+    <script>
+        function generatePassword() {
+            const length = document.getElementById('length').value;
+            const includeSymbols = document.getElementById('symbols').classList.contains('active');
+            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            const symbols = "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+            let password = "";
+            let characters = charset;
+            if (includeSymbols) {
+                characters += symbols;
+            }
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * characters.length);
+                password += characters[randomIndex];
+            }
+            showBinaryAnimation(password);
+        }
+
+        function showBinaryAnimation(password) {
+            const binaryString = password.split('').map(char => char.charCodeAt(0).toString(2).padStart(8, '0')).join(' ');
+            const binaryElement = document.getElementById('generatedPassword');
+            binaryElement.value = binaryString;
+            binaryElement.classList.add('typing');
+            setTimeout(() => {
+                binaryElement.classList.remove('typing');
+                binaryElement.value = password;
+            }, 2000);
+        }
+
+        function toggleSymbols() {
+            const symbolsButton = document.getElementById('symbols');
+            symbolsButton.classList.toggle('active');
+        }
+    </script>
+</head>
+<body class="bg-black flex items-center justify-center min-h-screen">
+    <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-80 fade-in rgb-border">
+        <h1 class="text-white text-center text-2xl font-bold mb-2">Gerador de Senhas</h1>
+        <p class="text-gray-400 text-center mb-6">Gerador de senhas seguro e personalizável, permitindo a criação de senhas fortes com comprimento e inclusão de símbolos</p>
+        <div class="mb-6">
+            <label for="length" class="block text-gray-400 mb-2">Comprimento:</label>
+            <input type="number" id="length" value="12" class="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:scale-105">
+        </div>
+        <div class="mb-6">
+            <label for="symbols" class="block text-gray-400 mb-2">Incluir símbolos:</label>
+            <button id="symbols" onclick="toggleSymbols()" class="toggle-button w-full">Incluir símbolos</button>
+        </div>
+        <button onclick="generatePassword()" class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:scale-105">Gerar Senha</button>
+        <div class="mt-6">
+            <label for="generatedPassword" class="block text-gray-400 mb-2">Senha Gerada:</label>
+            <input type="text" id="generatedPassword" readonly class="w-full p-3 bg-gray-700 text-green-400 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:scale-105">
+        </div>
+    </div>
+</body>
+</html>
